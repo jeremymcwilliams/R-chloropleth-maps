@@ -1,19 +1,122 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "Chloropleth Maps in R"
+output: pdf_document
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+# Chloropleth Maps
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+We've probably all seen more than our fair share of COVID dashboards over the past 16+ months. With that said, some of the state-by-state and county-by-county visualizations can be pretty powerful. In today's coding club, we're going to dig into how to create these visualizations, called chloropleth maps, using a couple different data sets.
+
+
+Much of today's session is based upon this tutorial:
+
+https://urban-institute.medium.com/how-to-create-state-and-county-maps-easily-in-r-577d29300bb2
+
+There are other ways to create chloropleth maps in R, but for simplicity's sake, we'll focus on their method.
+
+
+First, let's load some libraries we'll use. We all know tidyverse, but we're also going to load a couple packages created by the Urban Institute.
 
 ```{r}
-plot(cars)
+
+
+library(tidyverse)
+library(urbnmapr)
+library(urbnthemes)
+set_urbn_defaults(style = "print")
+
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+The urbnmapr package has a couple datasets that contain spatial information on states and counties:
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r}
+
+states
+
+counties
+```
+
+
+Now, let's take a look at a dataset showing the Oregon vaccination rate by county as of last week (source: Oregonian):
+
+```{r}
+
+orCvData<-read_csv("OR_county_vax_cases.csv")
+orCvData
+
+```
+
+Now in order to apply this data to a map, we first have to merge the covid dataset to one of the spatial datasets provided by urbnmapr. To do this, we need to find a match point, where both datasets have identical column values. Typical match points would either by the county name, or the county FIPS (Federal Information Processing Standards), which is basically a numerical identifier for each county.
+
+Since our covid dataset does not contain a column for FIPS, we need to use county name instead. A problem, though, is that our covid dataset lists counties as single words (e.g. "Multnomah"), while the counties dataset lists them as two (e.g. "Multnomah County"). So, we need to get creative and 'wrangle' one of the datasets so we get a perfect match. Below, we'll use the 'mutate' function to create a new column in the counties dataset that lists counties as a single word. While we're at it, we'll create a subset of the counties dataset so it just contains Oregon counties.
+
+```{r}
+
+# create a subset of just Oregon counties
+oregonCounties<-filter(counties, state_name=="Oregon")
+
+# create a new column "County" that lists couties as a single word
+oregonCounties<-oregonCounties %>%mutate(County=(str_split(county_name, " ", simplify = TRUE)[,1]))
+
+oregonCounties
+```
+
+Now we're ready to merge the data using the "left_join" function:
+
+
+```{r}
+
+
+fullDataOr<-left_join(x=orCvData, y=oregonCounties, by=c("County"="County"))
+
+fullDataOr
+
+
+
+```
+
+Finally, we can now take this combined data, and use ggplot to generate a map:
+
+
+```{r}
+
+orMap <-fullDataOr %>% 
+  ggplot(mapping = aes(long, lat, group = group, fill = orcv$`Percentage of 18+ vaccinated`)) +
+  geom_polygon(color = "#ffffff", size = .25) +
+  scale_fill_gradient(labels = scales::percent,
+                       guide = guide_colorbar(title.position = "top")) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  theme(legend.title = element_text(),
+        legend.key.width = unit(0.5, "in")) +
+  labs(fill = "Percent of 18+ Vaccinated") 
+
+
+orMap
+
+```
+
+
+
+
+Now, can you create a map showing vaccination rates by state for August 9th, 2021, using the us_state_vaccinations.csv file?
+
+The strategy would be:
+
+
+* Read the csv file into a variable, and limit by date (using filter)
+* Look at the data columns, and the data in the 'states' data set. Is there a match? Get creative if necessary!
+* Merge the data using left_join
+* Generate the map
+
+
+```{r}
+
+
+
+
+
+
+```
+
 
