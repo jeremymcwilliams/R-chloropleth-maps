@@ -11,7 +11,7 @@
 
 in console (lower left-hand corner):
 * `library(usethis)`
-* `use_course("https://github.com/jeremymcwilliams/R-chloropleth-maps/archive/refs/tags/0.5.zip")`
+* `use_course("https://github.com/jeremymcwilliams/R-chloropleth-maps/archive/refs/tags/0.6.zip")`
 
 After running the command above, you'll be prompted whether to download to your current directory. Go ahead and answer in the affirmative (you'll be presented with variations on "yes"). Once the course files download, you'll be prompted as to whether to delete the zip file. Again, answer in the affirmative. Once you do, click "Save", and your window will refresh to a new R session.
 
@@ -20,7 +20,7 @@ After running the command above, you'll be prompted whether to download to your 
 
 * Visit https://rstudio.cloud, and sign in with your google account  
 * Click the arrow next to "New Project", and select "from Github Repository"
-* Enter the url: https://github.com/jeremymcwilliams/R-t-test-anova
+* Enter the url: https://github.com/jeremymcwilliams/R-chloropleth-maps
 * Once the project loads, run `install.packages("tidyverse")` in the console.
 
 
