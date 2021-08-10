@@ -26,3 +26,6 @@ After running the command above, you'll be prompted whether to download to your 
 
 #### To get started, click "workshop-notebook.Rmd" in the files window, and then minimize the console window.
 
+
+This is largely based upon the tutorial by the Urban Institute...thank you! (https://urban-institute.medium.com/how-to-create-state-and-county-maps-easily-in-r-577d29300bb2)
+
