@@ -82,7 +82,7 @@ Finally, we can now take this combined data, and use ggplot to generate a map:
 ```{r}
 
 orMap <-fullDataOr %>% 
-  ggplot(mapping = aes(long, lat, group = group, fill = orcv$`Percentage of 18+ vaccinated`)) +
+  ggplot(mapping = aes(long, lat, group = group, fill = fullDataOr$`Percentage of 18+ vaccinated`)) +
   geom_polygon(color = "#ffffff", size = .25) +
   scale_fill_gradient(labels = scales::percent,
                        guide = guide_colorbar(title.position = "top")) +
